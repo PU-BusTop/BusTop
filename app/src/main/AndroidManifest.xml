@@ -16,6 +16,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".HomeRouteActivity" />
+        <activity android:name=".RealTimeBusActivity"></activity>
     </application>
 
 </manifest>
