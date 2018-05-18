@@ -4,20 +4,28 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:gravity="center"
     tools:context="com.yr.bustop.MainActivity">
-
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_weight="1"
-        android:text="Button" />
+        android:layout_margin="5dp"
+        android:textSize="30dp"
+        android:background="#FF9955"
+        android:text="公車\n動態" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:layout_weight="1"
-        android:text="Button" />
+        android:layout_margin="5dp"
+        android:textSize="30dp"
+        android:background="#88FF88"
+        android:text="常用\n站牌" />
 </LinearLayout>
