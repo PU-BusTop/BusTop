@@ -17,7 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomeRouteActivity" />
-        <activity android:name=".RealTimeBusActivity"></activity>
+        <activity android:name=".RealTimeBusActivity" />
     </application>
 
 </manifest>
