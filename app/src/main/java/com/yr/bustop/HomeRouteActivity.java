@@ -1,5 +1,6 @@
 package com.yr.bustop;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -47,6 +48,13 @@ public class HomeRouteActivity extends AppCompatActivity {
                 //TODO: Intent
                 Map route = routeData.get(i);
                 Toast.makeText(HomeRouteActivity.this,route.get("num")+" "+route.get("name"),Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(HomeRouteActivity.this,RealTimeBusActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putString("RouteNum",route.get("num").toString());
+                intent.putExtras(bundle);
+                startActivity(intent);
+
             }
         });
 
