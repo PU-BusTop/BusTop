@@ -9,7 +9,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 /**
  * Created by YR on 2018/5/24.
@@ -17,14 +16,13 @@ import java.util.Map;
 
 public class StopAdapter extends BaseAdapter {
 
-    ArrayList<Map<String,String>> StopsData;
+    ArrayList<Stop> StopsData;
     private LayoutInflater inflater;
 
-    StopAdapter(Context context, ArrayList<Map<String,String>> StopsData){
+    StopAdapter(Context context, ArrayList<Stop> StopsData){
         this.StopsData = StopsData;
         inflater = LayoutInflater.from(context);
     }
-
 
     @Override
     public int getCount() {
@@ -32,7 +30,7 @@ public class StopAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int i) {
+    public Stop getItem(int i) {
         return StopsData.get(i);
     }
 
@@ -49,16 +47,15 @@ public class StopAdapter extends BaseAdapter {
             view = inflater.inflate(R.layout.real_time_item, null);
         }
 
-
         TextView StopName = view.findViewById(R.id.StopName);
         TextView StopTime = view.findViewById(R.id.StopTime);
         ImageView Hand = view.findViewById(R.id.Hand);
         // 將文字內容設定給TextView
-        StopName.setText(StopsData.get(i).get("name"));
-        StopTime.setText(StopsData.get(i).get("time") + " 分鐘");
-        if(StopsData.get(i).get("hand").equals("0")){
+        StopName.setText(StopsData.get(i).getName());
+        StopTime.setText(StopsData.get(i).getTime() + " 分鐘");
+        if(StopsData.get(i).getIfHand().equals("0")){
             Hand.setVisibility(View.INVISIBLE);
-        }else if(StopsData.get(i).get("hand").equals("1")){
+        }else if(StopsData.get(i).getIfHand().equals("1")){
             Hand.setVisibility(View.VISIBLE);
         }
 
@@ -66,3 +63,5 @@ public class StopAdapter extends BaseAdapter {
         return view;
     }
 }
+
+

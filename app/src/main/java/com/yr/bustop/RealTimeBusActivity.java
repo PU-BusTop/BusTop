@@ -10,9 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class RealTimeBusActivity extends AppCompatActivity {
 
@@ -27,8 +25,8 @@ public class RealTimeBusActivity extends AppCompatActivity {
     String[] fakeTime = new String[]{"20","18","13","5","1"};
     String[] fakeHand = new String[]{"0","0","0","1","0"};
 
-    ArrayList<Map<String,String>> StopsData_Go;
-    ArrayList<Map<String,String>> StopsData_Back;
+    ArrayList<Stop> StopsData_Go;
+    ArrayList<Stop> StopsData_Back;
 
     StopAdapter adapter;
 
@@ -44,27 +42,19 @@ public class RealTimeBusActivity extends AppCompatActivity {
         setTitle(ROUTE_NUM + " 路線");
 
         /*去程*/
-        StopsData_Go = new ArrayList<Map<String, String>>();
+        StopsData_Go = new ArrayList<Stop>();
         for (int i=0;i<5;i++){
-            Map map =new HashMap();
-            map.put("name",fakeName[i]);
-            map.put("time",fakeTime[i]);
-            map.put("hand",fakeHand[i]);
-
-            StopsData_Go.add(map);
+            Stop stop = new Stop(fakeName[i],fakeTime[i],fakeHand[i]);
+            StopsData_Go.add(stop);
         }
         Log.d("StopsData_Go", StopsData_Go.toString());
 
 
         /*返程*/
-        StopsData_Back = new ArrayList<Map<String, String>>();
+        StopsData_Back = new ArrayList<Stop>();
         for (int i=4;i>=0;i--){
-            Map map =new HashMap();
-            map.put("name",fakeName[i]);
-            map.put("time",fakeTime[i]);
-            map.put("hand",fakeHand[i]);
-
-            StopsData_Back.add(map);
+            Stop stop = new Stop(fakeName[i],fakeTime[i],fakeHand[i]);
+            StopsData_Back.add(stop);
         }
         Log.d("StopsData_Back", StopsData_Back.toString());
 
@@ -74,7 +64,7 @@ public class RealTimeBusActivity extends AppCompatActivity {
     }
 
     private void initData() {
-        pageList = new ArrayList<>();
+        pageList = new ArrayList<RealTimeBusPage>();
         pageList.add(new RealTimeBusPage(RealTimeBusActivity.this,StopsData_Go));
         pageList.add(new RealTimeBusPage(RealTimeBusActivity.this,StopsData_Back));
     }
