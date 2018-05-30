@@ -55,7 +55,7 @@ public class RealTimeBusActivity extends AppCompatActivity {
 //        getEstimatedTimeOfArrival();
         new GetCityBusData(this){
             @Override
-            void handleResult(ArrayList<Map<String, String>> dataArray) {
+            void handleResult(ArrayList<Map<String, String>> dataArray0,ArrayList<Map<String, String>> dataArray1) {
                 //TODO
             }
         };
