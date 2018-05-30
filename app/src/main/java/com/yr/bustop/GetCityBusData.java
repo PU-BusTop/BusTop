@@ -31,11 +31,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 
+import static com.yr.bustop.Global.BusTop_URL;
 import static com.yr.bustop.Global.EstimatedTimeOfArrival_URL;
 import static com.yr.bustop.Global.RealTimeNearStop_URL;
 import static com.yr.bustop.Global.TAG_Direction;
 import static com.yr.bustop.Global.TAG_EstimateTime;
 import static com.yr.bustop.Global.TAG_ORDER;
+import static com.yr.bustop.Global.TAG_STATUS;
 import static com.yr.bustop.Global.TAG_StopName;
 import static com.yr.bustop.Global.TAG_zh_tw;
 
@@ -43,7 +45,7 @@ abstract class GetCityBusData {
     Context c;
     RequestQueue mQueue;
     StringRequest mRequest;
-    ArrayList<Map<String, String>> estimatedTimeData0,estimatedTimeData1, RealTimeNearStopData0,RealTimeNearStopData1,finalData0,finalData1;
+    ArrayList<Map<String, String>> estimatedTimeData0,estimatedTimeData1, RealTimeNearStopData0,RealTimeNearStopData1,bustopData,finalData0,finalData1;
     private String[] route55 = new String[]{"豐原", "和平街", "媽祖廟", "臺灣企銀(豐原郵局)", "豐原電信局", "豐原高商", "豐原分局", "輸配電",
      "文化新村", "菸廠", "永豐螺絲", "校栗林", "中山祥和路口", "弘文中學", "矽品精密", "潭秀里", "潭子加工區", "潭子國小", "潭子火車站",
      "潭子區公所", "中山圓通南路口", "中山合作街口", "僑忠國小", "瓦窯", "頭家厝", "中山中興路口", "中山路一巷口", "舊社公園(北屯路)", "北新國中",
@@ -64,8 +66,7 @@ abstract class GetCityBusData {
         c = context;
         initial();
         getEstimatedTimeOfArrival();
-//        getRealTimeNearStop();
-
+        getBusTop();
     }
 
     abstract void handleResult(ArrayList<Map<String, String>> dataArray0, ArrayList<Map<String, String>> dataArray1);
@@ -104,8 +105,10 @@ abstract class GetCityBusData {
                         map.put(TAG_StopName, stopname);
                         map.put(TAG_EstimateTime, object.getInt(TAG_EstimateTime)+"");
                         map.put(TAG_ORDER, java.util.Arrays.asList(route55).indexOf(stopname)+"");
-                        if(direction==0)
+                        if(direction==0){
+                            map.put(TAG_STATUS,"0");
                             estimatedTimeData0.add(map);
+                        }
                         else if(direction==1)
                             estimatedTimeData1.add(map);
                     }
@@ -146,27 +149,22 @@ abstract class GetCityBusData {
         mQueue.add(mRequest);
     }
 
-    private void getRealTimeNearStop(){
-        RealTimeNearStopData0 = new ArrayList<>();
-        RealTimeNearStopData1 = new ArrayList<>();
-        mRequest = new StringRequest(Request.Method.GET, RealTimeNearStop_URL, new Response.Listener<String>() {
+    private void getBusTop(){
+        bustopData = new ArrayList<>();
+        mRequest = new StringRequest(Request.Method.GET, BusTop_URL, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                //TODO
                 Log.d("Response",response);
                 try {
                     JSONArray jsonArray = new JSONArray(response);
                     for(int i=0; i<jsonArray.length();i++){
                         JSONObject object = jsonArray.getJSONObject(i);
-                        HashMap<String, String> map = new HashMap<>();
-                        int direction = object.getInt(TAG_Direction);
-                        String stopname = object.getJSONObject(TAG_StopName).getString(TAG_zh_tw);
-                        map.put(TAG_StopName,stopname);
-                        map.put(TAG_ORDER, java.util.Arrays.asList(route55).indexOf(stopname)+"");
-                        if(direction==0)
-                            RealTimeNearStopData0.add(map);
-                        else if(direction==1)
-                            RealTimeNearStopData1.add(map);
+                        int status = object.getInt(TAG_STATUS);
+                        if(status==1) {
+                            HashMap<String, String> map = new HashMap<>();
+                            map.put(TAG_StopName, object.getString("stopName"));
+                            bustopData.add(map);
+                        }
                     }
                 } catch (JSONException e) {
                     Log.e("JSON Error", e.getMessage());
@@ -192,19 +190,11 @@ abstract class GetCityBusData {
                     Toast.makeText(c,"連線至主機時候發生問題",Toast.LENGTH_LONG).show();
                 }
             }
-        }){
-            @Override
-            public Map<String, String> getHeaders() throws AuthFailureError {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("Authorization",sAuth);
-                map.put("x-date",xdate);
-                return map;
-            }
-        };
+        });
         mQueue.add(mRequest);
     }
 
-    public static String getServerTime() {
+    public String getServerTime() {
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat(
                 "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
@@ -215,8 +205,12 @@ abstract class GetCityBusData {
     private void sortData(){
         Comparator<Map<String, String>> mapComparator = new Comparator<Map<String, String>>() {
             public int compare(Map<String, String> m1, Map<String, String> m2) {
+//                if(m1.get(TAG_ORDER).compareTo(m2.get(TAG_ORDER))!=0)
+//                    return m1.get(TAG_ORDER).compareTo(m2.get(TAG_ORDER));
+//                else
+//                    return m1.get(TAG_EstimateTime).compareTo(m2.get(TAG_EstimateTime));
                 if(m1.get(TAG_ORDER).compareTo(m2.get(TAG_ORDER))!=0)
-                    return m1.get(TAG_ORDER).compareTo(m2.get(TAG_ORDER));
+                    return Integer.parseInt(m1.get(TAG_ORDER))-Integer.parseInt(m2.get(TAG_ORDER));
                 else
                     return m1.get(TAG_EstimateTime).compareTo(m2.get(TAG_EstimateTime));
             }
@@ -230,13 +224,11 @@ abstract class GetCityBusData {
                 estimatedTimeData0.remove(i+1);
         }
         for(int i=0;i<estimatedTimeData1.size()-1;i++){
-            if(estimatedTimeData1.get(i).get(TAG_ORDER).equals(estimatedTimeData1.get(i+1).get(TAG_ORDER))){
+            if(estimatedTimeData1.get(i).get(TAG_ORDER).equals(estimatedTimeData1.get(i+1).get(TAG_ORDER)))
                 estimatedTimeData1.remove(i+1);
-                i--;
-            }
         }
 
-        //加入尚未發車
+        //加入尚未發車 & BusTop
         if(!estimatedTimeData0.get(0).get(TAG_ORDER).equals(0)) {
             int num = Integer.parseInt(estimatedTimeData0.get(0).get(TAG_ORDER));
             for(int i=0;i<num;i++){
@@ -244,6 +236,7 @@ abstract class GetCityBusData {
                 map.put(TAG_StopName, route55[i]);
                 map.put(TAG_EstimateTime, "尚未發車");
                 map.put(TAG_ORDER, i+"");
+                map.put(TAG_STATUS,"0");
                 estimatedTimeData0.add(i,map);
             }
         }
@@ -260,8 +253,17 @@ abstract class GetCityBusData {
             }
         }
 
+        for(int i=0;i<estimatedTimeData0.size();i++){
+            for(int j=0;j<bustopData.size();j++){
+                if(estimatedTimeData0.get(i).get(TAG_StopName).equals(bustopData.get(j).get(TAG_StopName))){
+                    HashMap<String ,String> map = (HashMap<String, String>) estimatedTimeData0.remove(i);
+                    map.put(TAG_STATUS,"1");
+                    estimatedTimeData0.add(i,map);
+                }
+            }
+        }
         Log.d("For Debug", estimatedTimeData0.toString());
-        Log.d("For Debug", estimatedTimeData1.toString());
+//        Log.d("For Debug", estimatedTimeData1.toString());
         finalData0 = estimatedTimeData0;
         finalData1 = estimatedTimeData1;
         handleResult(finalData0,finalData1);
