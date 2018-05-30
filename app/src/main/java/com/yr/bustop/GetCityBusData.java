@@ -45,7 +45,8 @@ abstract class GetCityBusData {
     Context c;
     RequestQueue mQueue;
     StringRequest mRequest;
-    ArrayList<Map<String, String>> estimatedTimeData0,estimatedTimeData1, RealTimeNearStopData0,RealTimeNearStopData1,bustopData,finalData0,finalData1;
+    ArrayList<HashMap<String, String>> estimatedTimeData0,estimatedTimeData1, bustopData;
+    ArrayList<Stop> finalData0,finalData1;
     private String[] route55 = new String[]{"豐原", "和平街", "媽祖廟", "臺灣企銀(豐原郵局)", "豐原電信局", "豐原高商", "豐原分局", "輸配電",
      "文化新村", "菸廠", "永豐螺絲", "校栗林", "中山祥和路口", "弘文中學", "矽品精密", "潭秀里", "潭子加工區", "潭子國小", "潭子火車站",
      "潭子區公所", "中山圓通南路口", "中山合作街口", "僑忠國小", "瓦窯", "頭家厝", "中山中興路口", "中山路一巷口", "舊社公園(北屯路)", "北新國中",
@@ -69,7 +70,7 @@ abstract class GetCityBusData {
         getBusTop();
     }
 
-    abstract void handleResult(ArrayList<Map<String, String>> dataArray0, ArrayList<Map<String, String>> dataArray1);
+    abstract void handleResult(ArrayList<Stop> go, ArrayList<Stop> back);
 
     private void initial(){
         mQueue = Volley.newRequestQueue(c);
@@ -256,7 +257,7 @@ abstract class GetCityBusData {
         for(int i=0;i<estimatedTimeData0.size();i++){
             for(int j=0;j<bustopData.size();j++){
                 if(estimatedTimeData0.get(i).get(TAG_StopName).equals(bustopData.get(j).get(TAG_StopName))){
-                    HashMap<String ,String> map = (HashMap<String, String>) estimatedTimeData0.remove(i);
+                    HashMap<String ,String> map = estimatedTimeData0.remove(i);
                     map.put(TAG_STATUS,"1");
                     estimatedTimeData0.add(i,map);
                 }
@@ -264,8 +265,18 @@ abstract class GetCityBusData {
         }
         Log.d("For Debug", estimatedTimeData0.toString());
 //        Log.d("For Debug", estimatedTimeData1.toString());
-        finalData0 = estimatedTimeData0;
-        finalData1 = estimatedTimeData1;
+        finalData0 = new ArrayList<>();
+        for(int i=estimatedTimeData0.size()-1; i>0;i--){
+            HashMap<String, String > map = estimatedTimeData0.get(i);
+            Stop s = new Stop(map.get(TAG_StopName),map.get(TAG_EstimateTime),map.get(TAG_STATUS));
+            finalData0.add(s);
+        }
+        finalData1 = new ArrayList<>();
+        for(int i=0; i<estimatedTimeData1.size();i++){
+            HashMap<String, String > map = estimatedTimeData1.get(i);
+            Stop s = new Stop(map.get(TAG_StopName),map.get(TAG_EstimateTime),map.get(TAG_STATUS));
+            finalData1.add(s);
+        }
         handleResult(finalData0,finalData1);
     }
 }

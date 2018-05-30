@@ -52,11 +52,11 @@ public class StopAdapter extends BaseAdapter {
         ImageView Hand = view.findViewById(R.id.Hand);
         // 將文字內容設定給TextView
         StopName.setText(StopsData.get(i).getName());
-        StopTime.setText(StopsData.get(i).getTime() + " 分鐘");
-        if(StopsData.get(i).getIfHand().equals("0")){
-            Hand.setVisibility(View.INVISIBLE);
-        }else if(StopsData.get(i).getIfHand().equals("1")){
+        StopTime.setText(StopsData.get(i).getTime());
+        if(StopsData.get(i).getIfHand()){
             Hand.setVisibility(View.VISIBLE);
+        }else if(!StopsData.get(i).getIfHand()){
+            Hand.setVisibility(View.INVISIBLE);
         }
 
         // 一定要將convertView回傳，供ListView呈現使用，並加入重用機制中

@@ -50,34 +50,36 @@ public class RealTimeBusActivity extends AppCompatActivity {
         ROUTE_NUM = bundle.getString("RouteNum");
 //        mQueue = Volley.newRequestQueue(this);
 //        getEstimatedTimeOfArrival();
-        new GetCityBusData(this){
+        new GetCityBusData(this) {
             @Override
-            void handleResult(ArrayList<Map<String, String>> dataArray0,ArrayList<Map<String, String>> dataArray1) {
-                //TODO
+            void handleResult(ArrayList<Stop> go, ArrayList<Stop> back) {
+                StopsData_Go = go;
+                StopsData_Back = back;
+                initData();
+                initView();
             }
         };
         //ActionBar 文字
         setTitle(ROUTE_NUM + " 路線");
 
-        /*去程*/
-        StopsData_Go = new ArrayList<Stop>();
-        for (int i=0;i<5;i++){
-            Stop stop = new Stop(fakeName[i],fakeTime[i],fakeHand[i]);
-            StopsData_Go.add(stop);
-        }
-        Log.d("StopsData_Go", StopsData_Go.toString());
+//        /*去程*/
+//        StopsData_Go = new ArrayList<Stop>();
+//        for (int i=0;i<5;i++){
+//            Stop stop = new Stop(fakeName[i],fakeTime[i],fakeHand[i]);
+//            StopsData_Go.add(stop);
+//        }
+//        Log.d("StopsData_Go", StopsData_Go.toString());
+//
+//
+//        /*返程*/
+//        StopsData_Back = new ArrayList<Stop>();
+//        for (int i=4;i>=0;i--){
+//            Stop stop = new Stop(fakeName[i],fakeTime[i],fakeHand[i]);
+//            StopsData_Back.add(stop);
+//        }
+//        Log.d("StopsData_Back", StopsData_Back.toString());
 
 
-        /*返程*/
-        StopsData_Back = new ArrayList<Stop>();
-        for (int i=4;i>=0;i--){
-            Stop stop = new Stop(fakeName[i],fakeTime[i],fakeHand[i]);
-            StopsData_Back.add(stop);
-        }
-        Log.d("StopsData_Back", StopsData_Back.toString());
-
-        initData();
-        initView();
 
     }
 

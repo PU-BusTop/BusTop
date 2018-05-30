@@ -26,15 +26,24 @@ public class Stop {
     }
 
     public String getTime() {
-        return time;
+        try {
+            return (Integer.parseInt(time)/60)+"分鐘";
+        }catch (Exception e){
+            return time;
+        }
     }
 
     public void setTime(String time) {
         this.time = time;
     }
 
-    public String getIfHand() {
-        return ifHand;
+    public boolean getIfHand() {
+        if(ifHand!=null && ifHand.equals("0"))
+            return false;
+        else if(ifHand!=null && ifHand.equals("1"))
+            return true;
+        else
+            return false;
     }
 
     public void setIfHand(String ifHand) {
