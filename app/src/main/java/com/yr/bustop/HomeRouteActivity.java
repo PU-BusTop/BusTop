@@ -7,7 +7,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +17,8 @@ public class HomeRouteActivity extends AppCompatActivity {
     ListView RouteListview;
 
     //假資料
-    String[] fakeNum = new String[]{"1","2","3","4","5"};
-    String[] fakeName = new String[]{"A - B","A - C","E - J","C - T","R - Z"};
+    String[] fakeNum = new String[]{"6","12","14","48","55"};
+    String[] fakeName = new String[]{"干城站 - 忠義里","明德高中(明德街) - 豐原鎮清宮","干城站 - 舊庄","台中火車站 - 嶺東科技大學","地方法院 - 豐原"};
 
     ArrayList<Map<String,String>> routeData;
     @Override
@@ -47,14 +46,15 @@ public class HomeRouteActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 //TODO: Intent
                 Map route = routeData.get(i);
-                Toast.makeText(HomeRouteActivity.this,route.get("num")+" "+route.get("name"),Toast.LENGTH_SHORT).show();
+                //Toast.makeText(HomeRouteActivity.this,route.get("num")+" "+route.get("name"),Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(HomeRouteActivity.this,RealTimeBusActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putString("RouteNum",route.get("num").toString());
-                intent.putExtras(bundle);
-                startActivity(intent);
-
+                if(i==4){ //只有55號公車才換頁
+                    Intent intent = new Intent(HomeRouteActivity.this,RealTimeBusActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("RouteNum",route.get("num").toString());
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
             }
         });
 
