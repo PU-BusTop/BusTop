@@ -230,22 +230,22 @@ abstract class GetCityBusData {
         }
 
         //加入尚未發車 & BusTop
-        if(!estimatedTimeData0.get(0).get(TAG_ORDER).equals(0)) {
-            int num = Integer.parseInt(estimatedTimeData0.get(0).get(TAG_ORDER));
-            for(int i=0;i<num;i++){
+        if(!estimatedTimeData0.get(estimatedTimeData0.size()-1).get(TAG_ORDER).equals("51")) {
+            int num = Integer.parseInt(estimatedTimeData0.get(estimatedTimeData0.size()-1).get(TAG_ORDER));
+            for(int i=num+1;i<52;i++){
                 HashMap<String, String> map = new HashMap<>();
                 map.put(TAG_StopName, route55[i]);
                 map.put(TAG_EstimateTime, "尚未發車");
                 map.put(TAG_ORDER, i+"");
                 map.put(TAG_STATUS,"0");
-                estimatedTimeData0.add(i,map);
+                estimatedTimeData0.add(map);
             }
         }
 
 
         if(!estimatedTimeData1.get(0).get(TAG_ORDER).equals(0)){
             int num = Integer.parseInt(estimatedTimeData1.get(0).get(TAG_ORDER));
-            for(int i=0;i<num;i++) {
+            for(int i=0;i<=num;i++) {
                 HashMap<String, String> map = new HashMap<>();
                 map.put(TAG_StopName, route55_1[i]);
                 map.put(TAG_EstimateTime, "尚未發車");
@@ -266,7 +266,7 @@ abstract class GetCityBusData {
         Log.d("For Debug", estimatedTimeData0.toString());
 //        Log.d("For Debug", estimatedTimeData1.toString());
         finalData0 = new ArrayList<>();
-        for(int i=estimatedTimeData0.size()-1; i>0;i--){
+        for(int i=estimatedTimeData0.size()-1; i>=0;i--){
             HashMap<String, String > map = estimatedTimeData0.get(i);
             Stop s = new Stop(map.get(TAG_StopName),map.get(TAG_EstimateTime),map.get(TAG_STATUS));
             finalData0.add(s);
@@ -277,6 +277,7 @@ abstract class GetCityBusData {
             Stop s = new Stop(map.get(TAG_StopName),map.get(TAG_EstimateTime),map.get(TAG_STATUS));
             finalData1.add(s);
         }
+        Log.d("For Debug", estimatedTimeData0.toString());
         handleResult(finalData0,finalData1);
     }
 }
